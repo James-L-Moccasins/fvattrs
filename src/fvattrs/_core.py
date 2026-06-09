@@ -90,33 +90,45 @@ def _split_parameters(
 ) -> tuple[tuple[Argument, ...], tuple[KeywordArgument, ...]]:
     arguments: list[Argument] = []
     kwarguments: list[KeywordArgument] = []
+    outputs: list[Output] = []
 
     for parameter in parameters:
         if isinstance(parameter, Argument):
             arguments.append(parameter)
         elif isinstance(parameter, KeywordArgument):
             kwarguments.append(parameter)
+        elif isinstance(parameter, Output):
+            outputs.append(parameter)
         else:
             error_msg = (
-                f"Expected Argument | KeywordArgument, got {type(parameter)}."
+                "Expected Argument | KeywordArgument | Output,"
+                f" got {type(parameter)}."
             )
             raise TypeError(error_msg)
 
-    return tuple(arguments), tuple(kwarguments)
+    return tuple(arguments), tuple(kwarguments), tuple(outputs)
 
 
-def define_io(*parameters: Argument | KeywordArgument) -> Callable:
+def define_io(*parameters: Argument | KeywordArgument | Output) -> Callable:
+    arguments, kwarguments, outputs = _split_parameters(parameters)
+
+    if len(outputs) > 1:
+        error_msg = f"Expected at most one Output, got {len(outputs)}."
+        raise ValueError(error_msg)
+
     def decorator(func: Callable) -> Callable:
-        arguments, kwarguments = _split_parameters(parameters)
-
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: object, **kwargs: object) -> object:
             for argument in arguments:
                 args = list(args)
                 args[argument.index] = argument(args[argument.index])
 
             for kwargument in kwarguments:
                 kwargs[kwargument.name] = kwargument(kwargs[kwargument.name])
+
+            if outputs:
+                raw_output = func(*args, **kwargs)
+                return outputs[0](raw_output)
 
             return func(*args, **kwargs)
 
