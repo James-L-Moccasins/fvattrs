@@ -1,0 +1,15 @@
+- [x] Finish tests for Variable
+- [x] Write test_utils
+- [ ] Fix Ruff warnings
+- [ ] Extend _split_parameters to output
+- [ ] Test _split_parameters
+- [ ] Implement define_io
+- [ ] Test define_io
+- [ ] Write converters
+- [ ] Write validators
+- [ ] Write docstrings
+- [ ] Write Changelog
+- [ ] Write documentation
+- [ ] Setup CI/CD
+
+- [ ] Write autodefine() {creating Argument / KeywordArgument / Output; validate as usual}

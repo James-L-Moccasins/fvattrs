@@ -1,0 +1,59 @@
+import inspect
+
+from collections.abc import Iterable
+
+import hypothesis
+import pytest
+
+from strategies import primitives
+
+from fvattrs._utils import always_iterable
+
+
+class TestIO:
+    @staticmethod
+    def test_signature():
+        signature = inspect.signature(always_iterable)
+        expected_params = [
+            ("obj", inspect._empty),
+            ("base_type", (str, bytes)),
+        ]
+
+        params = list(signature.parameters.values())
+        for actual, (name, default) in zip(
+            params,
+            expected_params,
+            strict=True,
+        ):
+            assert actual.name == name
+            assert actual.default == default
+
+
+class TestNominalPassingCases:
+    @staticmethod
+    def test_none_returns_empty_iterator():
+        assert tuple(always_iterable(None)) == ()
+
+    @staticmethod
+    @pytest.mark.parametrize("str_like", ["abc", b"abc"])
+    def test_stringlike_are_wrapped_if_in_base_type(str_like):
+        assert tuple(always_iterable(str_like, base_type=(str, bytes))) == (
+            str_like,
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize("str_like", ["abc", b"abc"])
+    def test_stringlike_are_iterated_if_no_base_type(str_like):
+        assert tuple(always_iterable(str_like, base_type=None)) == tuple(
+            str_like,
+        )
+
+    @staticmethod
+    @hypothesis.given(primitives.filter(lambda x: not isinstance(x, Iterable)))
+    def test_non_iterable_returns_singleton(non_iterable):
+        assert tuple(always_iterable(non_iterable)) == (non_iterable,)
+
+    @staticmethod
+    @pytest.mark.parametrize("iterable", [[1, 2, 3], (1, 2, 3), range(3)])
+    def test_iterables_are_yielded_as_is(iterable):
+        assert tuple(always_iterable(iterable)) == tuple(iterable)
