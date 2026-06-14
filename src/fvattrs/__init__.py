@@ -1,1 +1,7 @@
-from ._core import Argument, KeywordArgument, Output, define, define_io
+from ._core import (
+    KeywordArgument,
+    Output,
+    PositionalArgument,
+    define,
+    define_io,
+)

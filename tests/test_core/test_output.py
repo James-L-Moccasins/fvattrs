@@ -50,3 +50,9 @@ class TestIO:
         ):
             assert actual.name == name
             assert actual.default == default
+
+
+def test_name_is_output() -> None:
+    """Output name must be 'output'."""
+    output = Output()
+    assert output.name == "output"

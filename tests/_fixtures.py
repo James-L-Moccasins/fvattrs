@@ -37,3 +37,23 @@ def _dummy_passing_validator(_attr: Any, instance: Any, value: Any) -> None:
 @pytest.fixture(scope="package")
 def dummy_passing_validator() -> Callable:
     return _dummy_passing_validator
+
+
+class MockVariable:
+    def __init__(self, converter=None, validator=None):
+        self.trace = [converter, validator]
+
+    def __call__(self, value):
+        self.trace.append(value)
+        return value
+
+
+@pytest.fixture(scope="package")
+def mock_variable():
+    def factory(*args, **kwargs):
+        instance = MockVariable(*args, **kwargs)
+        factory.trace = instance.trace
+        return instance
+
+    factory.trace = []
+    return factory

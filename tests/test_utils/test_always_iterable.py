@@ -34,7 +34,7 @@ class TestIO:
             assert actual.default == default
 
 
-class TestNominalPassingCases:
+class TestNominalCases:
     """Test cases for nominal GOOD behavior of `always_iterable`."""
 
     @staticmethod

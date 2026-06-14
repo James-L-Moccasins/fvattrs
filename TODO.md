@@ -1,15 +1,11 @@
-- [x] Finish tests for Variable
-- [x] Write test_utils
+- [x] Test define_io
 - [ ] Fix Ruff warnings
-- [ ] Extend _split_parameters to output
-- [ ] Test _split_parameters
-- [ ] Implement define_io
-- [ ] Test define_io
 - [ ] Write converters
 - [ ] Write validators
-- [ ] Write docstrings
+- [ ] Write docstrings (Find why it doesn't raise a warning when missing docstrings in src)
+- [ ] Fix Ruff warnings
 - [ ] Write Changelog
 - [ ] Write documentation
 - [ ] Setup CI/CD
 
-- [ ] Write autodefine() {creating Argument / KeywordArgument / Output; validate as usual}
+- [ ] Write autodefine() {creating Argument / KeywordArgument / Output; validate as usual} or auto=True in define_io?

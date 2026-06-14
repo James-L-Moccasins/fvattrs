@@ -3,16 +3,21 @@ from typing import Callable
 import attrs
 import pytest
 
-from fvattrs._core import Argument, KeywordArgument, Output, _Variable
-
-
-VARS = pytest.mark.parametrize(
-    "var",
-    [_Variable, Argument, KeywordArgument, Output],
+from fvattrs._core import (
+    KeywordArgument,
+    Output,
+    PositionalArgument,
+    _Variable,
 )
 
 
-@VARS
+_VARS = pytest.mark.parametrize(
+    "var",
+    [_Variable, PositionalArgument, KeywordArgument, Output],
+)
+
+
+@_VARS
 def test_disabling_works(
     monkeypatch: pytest.MonkeyPatch,
     dummy_validator: Callable,
@@ -23,8 +28,8 @@ def test_disabling_works(
     var(validator=dummy_validator)(value=False)
 
 
-@VARS
-class TestNominalPassingCases:
+@_VARS
+class TestNominalCases:
     """Test cases for nominal GOOD behavior of _Variable + child classes."""
 
     @staticmethod
@@ -71,8 +76,8 @@ class TestNominalPassingCases:
         var(converter=dummy_converter, validator=dummy_validator)(value=False)
 
 
-@VARS
-class TestNominalRaisingCases:
+@_VARS
+class TestRaisingCases:
     """Test cases for nominal BAD behavior of _Variable + child classes."""
 
     @staticmethod
@@ -98,7 +103,7 @@ class TestNominalRaisingCases:
             var(validator=validators)(value=False)
 
     @staticmethod
-    def test_attrs_validators_exception_is_explicit(var: _Variable) -> None:
+    def test_attrs_validators_exception_is_readable(var: _Variable) -> None:
         """The exception raised by attrs validators must be intact."""
         with pytest.raises(ValueError, match="must be >= 0: -1"):
             var(validator=attrs.validators.ge(0))(value=-1)
