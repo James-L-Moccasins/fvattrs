@@ -14,14 +14,14 @@ class TestIO:
     @staticmethod
     @hypothesis.given(primitives)
     def test_non_callable_converter_raises(non_callable: object) -> None:
-        """Given a non-callable converter KeywordArgument must raise a TypeError."""
+        """Given a non-callable converter KeywordArgument must raise a TypeError."""  # noqa: E501  # Would be less readable.
         with pytest.raises(TypeError):
             KeywordArgument(converter=non_callable)
 
     @staticmethod
     @hypothesis.given(primitives)
     def test_non_callable_validator_raises(non_callable: object) -> None:
-        """Given a non-callable validator KeywordArgument must raise a TypeError."""
+        """Given a non-callable validator KeywordArgument must raise a TypeError."""  # noqa: E501  # Would be less readable.
         with pytest.raises(TypeError):
             KeywordArgument(validator=non_callable)
 

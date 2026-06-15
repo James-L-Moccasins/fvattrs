@@ -1,7 +1,7 @@
-- [x] Test define_io
-- [ ] Fix Ruff warnings
-- [ ] Write converters
-- [ ] Write validators
+- [x] Fix Ruff warnings
+- [x] Write converters
+- [x] Write validators
+- [ ] Test validators
 - [ ] Write docstrings (Find why it doesn't raise a warning when missing docstrings in src)
 - [ ] Fix Ruff warnings
 - [ ] Write Changelog

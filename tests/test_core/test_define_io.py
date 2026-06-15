@@ -1,5 +1,7 @@
 import inspect
 
+from typing import Callable
+
 import attrs
 import hypothesis
 import pytest
@@ -73,7 +75,7 @@ class TestIO:
         with pytest.raises(NotImplementedError):
 
             @define_io(PositionalArgument(index=0))
-            def func(*args) -> None:
+            def func(*args: object) -> None:  # noqa: ARG001  # Purpose of the test.
                 return None
 
     @staticmethod
@@ -82,7 +84,7 @@ class TestIO:
         with pytest.raises(NotImplementedError):
 
             @define_io(KeywordArgument(name="value"))
-            def func(**kwargs) -> None:
+            def func(**kwargs: object) -> None:  # noqa: ARG001  # Purpose of the test.
                 return None
 
     @staticmethod
@@ -91,19 +93,19 @@ class TestIO:
         with pytest.raises(ValueError, match="index must be <= 0"):
 
             @define_io(PositionalArgument(index=1))
-            def func(x) -> None:
+            def func(x: object) -> None:  # noqa: ARG001  # We dont care for this test.
                 return None
 
     @staticmethod
     def test_redundant_arguments_raises() -> None:
         """A parameter defined both positionally and by name must raise."""
-        with pytest.raises(ValueError):  # noqa: PT011  # regex fails wierdly.
+        with pytest.raises(ValueError):  # noqa: PT011  # regex does not match wierdly.
 
             @define_io(
                 PositionalArgument(index=0),
                 KeywordArgument(name="x"),
             )
-            def func(x) -> None:
+            def func(x: object) -> None:  # noqa: ARG001  # We dont care for this test.
                 return None
 
     @staticmethod
@@ -115,7 +117,7 @@ class TestIO:
         ):
 
             @define_io(KeywordArgument(name="missing"))
-            def func(x, y) -> None:
+            def func(x: object, y: object) -> None:  # noqa: ARG001  # We dont care for this test.
                 return None
 
     @staticmethod
@@ -130,14 +132,17 @@ class TestIO:
         assert params[0].kind == inspect.Parameter.VAR_POSITIONAL
 
 
-def e2e():
+def _e2e() -> tuple[Callable, Callable]:
     converters = (
         lambda x: x + 1,
         lambda x: x + 2,
         lambda x: x * 3,
         lambda x: x * 4,
     )
-    output_converter = lambda x: x / 2 + 1
+
+    def _output_converter(x: object) -> object:
+        return x / 2 + 1
+
     pos_validator = attrs.validators.gt(0)
 
     @define_io(
@@ -162,15 +167,15 @@ def e2e():
             validator=pos_validator,
         ),
         Output(
-            converter=output_converter,
+            converter=_output_converter,
             validator=attrs.validators.lt(1e6),
         ),
     )
     def func(x: int, y: int, z: int, z2: int = 4) -> int:
         return x + y + z + z2
 
-    def expected_function(x, y, z, z2):
-        return output_converter(
+    def expected_function(x: int, y: int, z: int, z2: int) -> int:
+        return _output_converter(
             sum(
                 converter(x) for converter, x in zip(converters, (x, y, z, z2))
             ),
@@ -192,9 +197,9 @@ class TestEnd2End:
             ([1, 2], {"z": 3}),  # Missing kwarg with default.
         ],
     )
-    def test_conversion_works(values) -> None:
+    def test_conversion_works(values: tuple[list, dict]) -> None:
         """Decorated function must return the expected result."""
-        func, expected_func = e2e()
+        func, expected_func = _e2e()
         args, kwargs = values
 
         assert func(*args, **kwargs) == expected_func(1, 2, 3, 4)
@@ -204,11 +209,11 @@ class TestEnd2End:
         "values",
         [([-1, 2, 3, 4], {}), ([1, 2, 3, -4], {}), ([1e6, 2e6, 3e6, 4e6], {})],
     )
-    def test_validation_works(values) -> None:
+    def test_validation_works(values: tuple[list, dict]) -> None:
         """Decorated function must raise ValueError."""
-        func, _ = e2e()
+        func, _ = _e2e()
         args, kwargs = values
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError):  # noqa: PT011  # Not important.
             func(*args, **kwargs)
 
     @staticmethod
