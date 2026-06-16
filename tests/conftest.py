@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import shutil
+
+from pathlib import Path
 from typing import Callable
 
 import pytest
@@ -77,3 +80,26 @@ def mock_variable() -> Callable:
 
     factory.trace = []
     return factory
+
+
+class _DummyAttribute:
+    """Dummy attribute object for testing validators."""
+
+    def __init__(self, name: str = "test_attr") -> None:
+        self.name = name
+
+
+@pytest.fixture(scope="package")
+def dummy_attribute() -> _DummyAttribute:
+    """Return a dummy attribute object for validator tests."""
+    return _DummyAttribute(name="dummy")
+
+
+def pytest_sessionfinish(session, exitstatus):
+    try:
+        tmp_dir = Path(session.config.rootpath) / "tmp"
+    except Exception:
+        return
+
+    if tmp_dir.exists():
+        shutil.rmtree(tmp_dir, ignore_errors=True)

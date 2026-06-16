@@ -9,7 +9,7 @@ import pytest
 
 from strategies import primitives
 
-from fvattrs._converters import to_date
+from fvattrs.converters import to_date
 
 
 class TestIO:
