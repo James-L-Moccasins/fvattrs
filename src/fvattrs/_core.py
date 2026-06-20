@@ -1,3 +1,5 @@
+"""Core utilities for defining argument conversion and validation behavior."""
+
 from __future__ import annotations
 
 import functools
@@ -21,11 +23,23 @@ _IS_ITERABLE_OF_CALLABLE = attrs.validators.deep_iterable(
 
 
 def _to_tuple(obj: object) -> tuple[object]:
+    """Normalize an object into a tuple."""
     return tuple(always_iterable(obj))
 
 
 @attrs.define(frozen=True)
 class _Variable:
+    """Apply converters and validators to a value.
+
+    Parameters
+    ----------
+    converter : callable or iterable of callables, optional
+        Converter(s) applied in order to the input value.
+    validator : callable or iterable of callables, optional
+        Validator(s) applied to the transformed value.
+
+    """
+
     name: str = attrs.field(init=False, repr=False, default="")
     converter: Callable = attrs.field(
         default=None,
@@ -39,6 +53,19 @@ class _Variable:
     )
 
     def __call__(self, value: object) -> object:
+        """Apply configured converters and validators to `value`.
+
+        Parameters
+        ----------
+        value : object
+            The value to transform and validate.
+
+        Returns
+        -------
+        object
+            The transformed value.
+
+        """
         for converter in self.converter:
             value = converter(value)
 
@@ -54,6 +81,19 @@ class _Variable:
 
 @attrs.define(frozen=True)
 class PositionalArgument(_Variable):
+    """Represent a positional argument in a callable signature.
+
+    Parameters
+    ----------
+    index : int
+        Zero-based position of the argument in the wrapped callable.
+    converter : callable or iterable of callables, optional
+        Converter(s) applied in order to the input value.
+    validator : callable or iterable of callables, optional
+        Validator(s) applied to the transformed value.
+
+    """
+
     index: int = attrs.field(
         default=0,
         validator=(attrs.validators.instance_of(int), attrs.validators.ge(0)),
@@ -65,6 +105,19 @@ class PositionalArgument(_Variable):
 
 @attrs.define(frozen=True)
 class KeywordArgument(_Variable):
+    """Represent a keyword argument in a callable signature.
+
+    Parameters
+    ----------
+    name : str
+        Name of the keyword argument.
+    converter : callable or iterable of callables, optional
+        Converter(s) applied in order to the input value.
+    validator : callable or iterable of callables, optional
+        Validator(s) applied to the transformed value.
+
+    """
+
     name: str = attrs.field(
         default="",
         validator=attrs.validators.instance_of(str),
@@ -73,6 +126,17 @@ class KeywordArgument(_Variable):
 
 @attrs.define(frozen=True)
 class Output(_Variable):
+    """Represent the output value produced by a callable.
+
+    Parameters
+    ----------
+    converter : callable or iterable of callables, optional
+        Converter(s) applied in order to the input value.
+    validator : callable or iterable of callables, optional
+        Validator(s) applied to the transformed value.
+
+    """
+
     def __attrs_post_init__(self) -> None:
         object.__setattr__(self, "name", "output")
 
@@ -82,6 +146,23 @@ def define(
     converter: None | Callable | Iterable[Callable] = None,
     validator: None | Callable | Iterable[Callable] = None,
 ) -> object:
+    """Apply converters and validators to a single value.
+
+    Parameters
+    ----------
+    value : object
+        Value to transform.
+    converter : callable or iterable of callables, optional
+        Converter(s) to apply.
+    validator : callable or iterable of callables, optional
+        Validator(s) to apply after conversion.
+
+    Returns
+    -------
+    object
+        The transformed value.
+
+    """
     variable = _Variable(converter=converter, validator=validator)
     return variable(value)
 
@@ -93,6 +174,7 @@ def _split_parameters(
     tuple[KeywordArgument, ...],
     tuple[Output, ...],
 ]:
+    """Separate parameters into positional, keyword, and output groups."""
     arguments: list[PositionalArgument] = []
     kwarguments: list[KeywordArgument] = []
     outputs: list[Output] = []
@@ -119,6 +201,7 @@ def _preliminary_parameters_check(
     kwarguments: Iterable[KeywordArgument],
     outputs: Iterable[Output],
 ) -> None:
+    """Validate parameter combinations before signature inspection."""
     seen_indices: set[int] = set()
     for argument in arguments:
         if argument.index in seen_indices:
@@ -143,6 +226,7 @@ def _preliminary_parameters_check(
 
 
 def _is_varp_or_vark(parameter: inspect.Parameter) -> bool:
+    """Return whether parameter is variadic positional or keyword argument."""
     return parameter.kind in {
         inspect.Parameter.VAR_POSITIONAL,
         inspect.Parameter.VAR_KEYWORD,
@@ -150,6 +234,7 @@ def _is_varp_or_vark(parameter: inspect.Parameter) -> bool:
 
 
 def _is_positional(parameter: inspect.Parameter) -> bool:
+    """Return whether parameter is positional or keyword argument."""
     return parameter.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
 
 
@@ -158,6 +243,7 @@ def _secondary_parameters_check(
     kwarguments: Iterable[KeywordArgument],
     signature: inspect.Signature,
 ) -> None:
+    """Validate parameter definitions against a callable signature."""
     parameters = tuple(signature.parameters.values())
 
     # There must be no variable arguments/keyword arguments.
@@ -192,6 +278,29 @@ def _secondary_parameters_check(
 def define_io(
     *parameters: PositionalArgument | KeywordArgument | Output,
 ) -> Callable:
+    """Decorate a callable to apply argument conversion and validation.
+
+    Parameters
+    ----------
+    *parameters
+        Positional arguments, keyword arguments, and optional output
+        descriptors describing how to process the wrapped callable.
+
+    Returns
+    -------
+    callable
+        A decorator that wraps the target callable.
+
+    Raises
+    ------
+    ValueError
+        If duplicate indices, duplicate names, or multiple outputs are
+        provided.
+        If any argument index is invalid or conflicts with keyword names.
+    NotImplementedError
+        If the signature contains variable arguments or keyword arguments.
+
+    """
     arguments, kwarguments, outputs = _split_parameters(parameters)
     _preliminary_parameters_check(arguments, kwarguments, outputs)
 

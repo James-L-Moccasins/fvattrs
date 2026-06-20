@@ -40,7 +40,13 @@ class TestIO:
             assert actual.default == default
 
 
-def test_nominal_case_works() -> None:
-    """String and datetime inputs must be converted to `datetime`."""
-    value, expected = "2024-01-02T03:04:05", datetime(2024, 1, 2, 3, 4, 5)  # noqa: DTZ001  # Ok for test.
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("2024-01-02T03:04:05", datetime(2024, 1, 2, 3, 4, 5)),  # noqa: DTZ001  # Ok for test.
+        (datetime(2024, 1, 2, 3, 4, 5), datetime(2024, 1, 2, 3, 4, 5)),  # noqa: DTZ001  # Ok for test.
+    ],
+)
+def test_nominal_case_works(value: str | datetime, expected: datetime) -> None:
+    """Inputs must be converted to `datetime`."""
     assert to_date(value) == expected

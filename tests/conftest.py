@@ -95,10 +95,11 @@ def dummy_attribute() -> _DummyAttribute:
     return _DummyAttribute(name="dummy")
 
 
-def pytest_sessionfinish(session, exitstatus):
+def pytest_sessionfinish(session: object, exitstatus: int) -> None:  # noqa: ARG001  Mandatory signature.
+    """Clean temp directory after pytests session ends."""
     try:
         tmp_dir = Path(session.config.rootpath) / "tmp"
-    except Exception:
+    except Exception:  # noqa: BLE001  # Necessary to clean in all cases.
         return
 
     if tmp_dir.exists():

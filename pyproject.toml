@@ -17,6 +17,10 @@ dev = [
     "ruff>=0.15.14",
 ]
 
+[tool.uv]
+exclude-newer = "30 days"
+
+# Linting/formating.
 [tool.ruff]
 line-length = 79
 indent-width = 4
@@ -48,8 +52,14 @@ fixable = ["ALL"]
     "SLF001", # Private members are not private enough to be untested.
     "S101",   # This is Pytest way of doing things.
 ]
+"converters.py" = [
+    "ARG001", # Signature imposed by attrs.
+]
+"validators.py" = [
+    "ARG001", # Signature imposed by attrs.
+]
 
-
+# Testing.
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = "--basetemp=./tmp"
