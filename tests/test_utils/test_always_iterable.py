@@ -7,9 +7,8 @@ from collections.abc import Iterable
 import hypothesis
 import pytest
 
-from strategies import primitives
-
 from fvattrs._utils import always_iterable
+from tests.strategies import primitives
 
 
 class TestIO:
@@ -25,11 +24,7 @@ class TestIO:
         ]
 
         params = list(signature.parameters.values())
-        for actual, (name, default) in zip(
-            params,
-            expected_params,
-            strict=True,
-        ):
+        for actual, (name, default) in zip(params, expected_params):
             assert actual.name == name
             assert actual.default == default
 

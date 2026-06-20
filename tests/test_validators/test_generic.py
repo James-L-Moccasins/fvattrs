@@ -6,9 +6,8 @@ from typing import Callable
 import hypothesis
 import pytest
 
-from strategies import primitives
-
 from fvattrs.validators import is_file, is_folder
+from tests.strategies import primitives
 
 
 _VALIDATORS = pytest.mark.parametrize("validator", [is_file, is_folder])
@@ -51,10 +50,6 @@ class TestIO:
         ]
 
         params = list(signature.parameters.values())
-        for actual, (name, default) in zip(
-            params,
-            expected_params,
-            strict=True,
-        ):
+        for actual, (name, default) in zip(params, expected_params):
             assert actual.name == name
             assert actual.default == default

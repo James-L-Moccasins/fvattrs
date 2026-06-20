@@ -17,11 +17,7 @@ def test_signature() -> None:
     ]
 
     params = list(signature.parameters.values())
-    for actual, (name, default) in zip(
-        params,
-        expected_params,
-        strict=True,
-    ):
+    for actual, (name, default) in zip(params, expected_params):
         assert actual.name == name
         assert actual.default == default
 

@@ -14,7 +14,7 @@ from typing import Callable
 
 import attrs
 
-from ._utils import always_iterable
+from fvattrs._utils import always_iterable
 
 
 _IS_ITERABLE_OF_CALLABLE = attrs.validators.deep_iterable(

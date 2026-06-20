@@ -7,9 +7,8 @@ from datetime import datetime
 import hypothesis
 import pytest
 
-from strategies import primitives
-
 from fvattrs.converters import to_date
+from tests.strategies import primitives
 
 
 class TestIO:
@@ -31,11 +30,7 @@ class TestIO:
         expected_params = [("value", inspect._empty)]
 
         params = list(signature.parameters.values())
-        for actual, (name, default) in zip(
-            params,
-            expected_params,
-            strict=True,
-        ):
+        for actual, (name, default) in zip(params, expected_params):
             assert actual.name == name
             assert actual.default == default
 

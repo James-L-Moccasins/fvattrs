@@ -6,9 +6,8 @@ import attrs
 import hypothesis
 import pytest
 
-from strategies import primitives
-
 from fvattrs import KeywordArgument, Output, PositionalArgument, define_io
+from tests.strategies import primitives
 
 
 class TestIO:

@@ -16,5 +16,6 @@
     "ruff.organizeImports": true,
     "ruff.codeAction.fixViolation": {
         "enable": false
-    }
+    },
+    "makefile.configureOnOpen": false
 }

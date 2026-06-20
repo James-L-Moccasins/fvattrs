@@ -1,4 +1,4 @@
-from ._core import (
+from fvattrs._core import (
     KeywordArgument,
     Output,
     PositionalArgument,
