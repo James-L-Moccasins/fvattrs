@@ -1,7 +1,7 @@
 PYTHON_VERSIONS := 3.9 3.10 3.11 3.12 3.13 3.14
 TEST_PY_TARGETS := $(addprefix test-py,$(PYTHON_VERSIONS))
 
-.PHONY: sync lint format test test-py clean
+.PHONY: sync lint format build test test-py test-all clean
 
 sync:
 	uv sync
@@ -11,6 +11,9 @@ lint:
 
 format:
 	uv run ruff format
+
+build:
+	uv build
 
 test:
 	uv run pytest
