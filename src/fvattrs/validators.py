@@ -6,21 +6,15 @@ from pathlib import Path
 def is_file(instance: object, attribute: object, value: object) -> None:
     """Validate that a value points to an existing file.
 
-    Parameters
-    ----------
-    instance : object
-        The instance being validated.
-    attribute : object
-        The attribute descriptor associated with the value.
-    value : object
-        Candidate value. Must be a `pathlib.Path` that exists and is a file.
+    Args:
+        instance: The instance being validated.
+        attribute: The attribute descriptor associated with the value.
+        value: Candidate value. Must be a `pathlib.Path` that exists and is a
+            file.
 
-    Raises
-    ------
-    TypeError
-        If `value` is not a `Path`.
-    ValueError
-        If `value` does not exist or is not a file.
+    Raises:
+        TypeError: If `value` is not a `Path`.
+        ValueError: If `value` does not exist or is not a file.
 
     """
     if not isinstance(value, Path):
@@ -35,22 +29,15 @@ def is_file(instance: object, attribute: object, value: object) -> None:
 def is_folder(instance: object, attribute: object, value: object) -> None:
     """Validate that a value points to an existing directory.
 
-    Parameters
-    ----------
-    instance : object
-        The instance being validated.
-    attribute : object
-        The attribute descriptor associated with the value.
-    value : object
-        Candidate value. Must be a `pathlib.Path` that exists and is a
-        directory.
+    Args:
+        instance: The instance being validated.
+        attribute: The attribute descriptor associated with the value.
+        value: Candidate value. Must be a `pathlib.Path` that exists and is a
+            directory.
 
-    Raises
-    ------
-    TypeError
-        If `value` is not a `Path`.
-    ValueError
-        If `value` does not exist or is not a directory.
+    Raises:
+        TypeError: If `value` is not a `Path`.
+        ValueError: If `value` does not exist or is not a directory.
 
     """
     if not isinstance(value, Path):

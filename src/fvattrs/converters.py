@@ -8,21 +8,15 @@ from pathlib import Path
 def to_path(value: object) -> Path:
     """Convert a value to a filesystem path.
 
-    Parameters
-    ----------
-    value : object
-        Value to convert. Must be a string or any object accepted by
-        `os.PathLike`.
+    Args:
+        value: Value to convert. Must be a string or any object accepted by
+            `os.PathLike`.
 
-    Returns
-    -------
-    pathlib.Path
-        A `Path` instance created from `value`.
+    Returns:
+        path: A `Path` instance created from `value`.
 
-    Raises
-    ------
-    TypeError
-        If `value` is not a string or path-like object.
+    Raises:
+        TypeError: If `value` is not a string or path-like object.
 
     """
     if not isinstance(value, (str, PathLike)):
@@ -37,24 +31,18 @@ def to_path(value: object) -> Path:
 def to_date(value: object) -> datetime:
     """Convert a value to a `datetime` object.
 
-    Parameters
-    ----------
-    value : object
-        Value to convert. If this is already a `datetime`, it is returned
-        unchanged. Otherwise, it must be a string in ISO 8601 format.
+    Args:
+        value: Value to convert. If this is already a `datetime`, it is
+            returned unchanged. Otherwise, it must be a string in ISO 8601
+            format.
 
-    Returns
-    -------
-    datetime.datetime
-        Parsed datetime value.
+    Returns:
+        datetime: Parsed datetime value.
 
-    Raises
-    ------
-    TypeError
-        If `value` is neither a string nor a `datetime`.
-    ValueError
-        If `value` is a string that cannot be parsed by
-        `datetime.fromisoformat`.
+    Raises:
+        TypeError: If `value` is neither a string nor a `datetime`.
+        ValueError: If `value` is a string that cannot be parsed by
+            `datetime.fromisoformat`.
 
     """
     if isinstance(value, datetime):

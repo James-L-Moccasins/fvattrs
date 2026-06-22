@@ -4,7 +4,7 @@ TEST_PY_TARGETS := $(addprefix test-py,$(PYTHON_VERSIONS))
 .PHONY: sync lint format build test test-py test-all clean
 
 sync:
-	uv sync
+	uv sync --all-groups
 
 lint:
 	uv run ruff check
@@ -24,5 +24,6 @@ test-py%:
 test-all: $(TEST_PY_TARGETS)
 
 clean:
-	rm -rf .venv .venv-* dist *.egg-info .pytest_cache __pycache__
+	rm -rf .venv .venv-* dist
+	find . -name '*.egg-info' -prune -exec rm -rf {} +
 	find . -type d \( -name '__pycache__' -o -name '.pytest_cache' \) -prune -exec rm -rf {} +

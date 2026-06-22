@@ -31,12 +31,9 @@ def _to_tuple(obj: object) -> tuple[object]:
 class _Variable:
     """Apply converters and validators to a value.
 
-    Parameters
-    ----------
-    converter : callable or iterable of callables, optional
-        Converter(s) applied in order to the input value.
-    validator : callable or iterable of callables, optional
-        Validator(s) applied to the transformed value.
+    Args:
+        converter: Converter(s) applied in order to the input value.
+        validator: Validator(s) applied to the transformed value.
 
     """
 
@@ -55,15 +52,11 @@ class _Variable:
     def __call__(self, value: object) -> object:
         """Apply configured converters and validators to `value`.
 
-        Parameters
-        ----------
-        value : object
-            The value to transform and validate.
+        Args:
+            value: The value to transform and validate.
 
-        Returns
-        -------
-        object
-            The transformed value.
+        Returns:
+            object: The transformed value.
 
         """
         for converter in self.converter:
@@ -83,14 +76,13 @@ class _Variable:
 class PositionalArgument(_Variable):
     """Represent a positional argument in a callable signature.
 
-    Parameters
-    ----------
-    index : int
-        Zero-based position of the argument in the wrapped callable.
-    converter : callable or iterable of callables, optional
-        Converter(s) applied in order to the input value.
-    validator : callable or iterable of callables, optional
-        Validator(s) applied to the transformed value.
+    Args:
+        index (int): Zero-based position of the argument in the wrapped
+            callable. Defaults to 0.
+        converter (callable or iterable of callables, optional): Converter(s)
+            applied in order to the input value.
+        validator (callable or iterable of callables, optional): Validator(s)
+            applied to the transformed value.
 
     """
 
@@ -107,14 +99,12 @@ class PositionalArgument(_Variable):
 class KeywordArgument(_Variable):
     """Represent a keyword argument in a callable signature.
 
-    Parameters
-    ----------
-    name : str
-        Name of the keyword argument.
-    converter : callable or iterable of callables, optional
-        Converter(s) applied in order to the input value.
-    validator : callable or iterable of callables, optional
-        Validator(s) applied to the transformed value.
+    Args:
+        name (str): Name of the keyword argument.
+        converter (callable or iterable of callables, optional): Converter(s)
+            applied in order to the input value.
+        validator (callable or iterable of callables, optional): Validator(s)
+            applied to the transformed value.
 
     """
 
@@ -128,12 +118,11 @@ class KeywordArgument(_Variable):
 class Output(_Variable):
     """Represent the output value produced by a callable.
 
-    Parameters
-    ----------
-    converter : callable or iterable of callables, optional
-        Converter(s) applied in order to the input value.
-    validator : callable or iterable of callables, optional
-        Validator(s) applied to the transformed value.
+    Args:
+        converter (callable or iterable of callables, optional): Converter(s)
+            applied in order to the input value.
+        validator (callable or iterable of callables, optional): Validator(s)
+            applied to the transformed value.
 
     """
 
@@ -148,19 +137,13 @@ def define(
 ) -> object:
     """Apply converters and validators to a single value.
 
-    Parameters
-    ----------
-    value : object
-        Value to transform.
-    converter : callable or iterable of callables, optional
-        Converter(s) to apply.
-    validator : callable or iterable of callables, optional
-        Validator(s) to apply after conversion.
+    Args:
+        value: Value to transform.
+        converter: Converter(s) to apply.
+        validator: Validator(s) to apply after conversion.
 
-    Returns
-    -------
-    object
-        The transformed value.
+    Returns:
+        object: The transformed value.
 
     """
     variable = _Variable(converter=converter, validator=validator)
@@ -280,25 +263,19 @@ def define_io(
 ) -> Callable:
     """Decorate a callable to apply argument conversion and validation.
 
-    Parameters
-    ----------
-    *parameters
-        Positional arguments, keyword arguments, and optional output
-        descriptors describing how to process the wrapped callable.
+    Args:
+        *parameters: Positional arguments, keyword arguments, or output
+            descriptors describing how to process the wrapped callable.
 
-    Returns
-    -------
-    callable
-        A decorator that wraps the target callable.
+    Returns:
+        callable: A decorator that wraps the target callable.
 
-    Raises
-    ------
-    ValueError
-        If duplicate indices, duplicate names, or multiple outputs are
-        provided.
-        If any argument index is invalid or conflicts with keyword names.
-    NotImplementedError
-        If the signature contains variable arguments or keyword arguments.
+    Raises:
+        ValueError: If duplicate indices, duplicate names, or multiple outputs
+            are provided, or if any argument index is invalid or conflicts
+            with keyword names.
+        NotImplementedError: If the signature contains variable positional
+            arguments or variable keyword arguments.
 
     """
     arguments, kwarguments, outputs = _split_parameters(parameters)

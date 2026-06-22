@@ -1,2 +1,8 @@
-- [ ] Write documentation
 - [ ] Setup CI/CD
+    - [x] CI on every push/pr
+    - [ ] CD on mr in main if tag
+- [ ] Write documentation
+    - [ ] Tutorial
+    - [ ] API Reference (MKDocs)
+    - [ ] Contribution guide
+    - [ ] Templates
