@@ -1,0 +1,80 @@
+name: CD
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    id-token: write
+    pages: write
+
+concurrency:
+    group: cd
+    cancel-in-progress: true
+
+jobs:
+    publish-pypi:
+        name: Publish to PyPI
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.14"
+
+            - name: Set up uv
+              uses: astral-sh/setup-uv@v4
+
+            - name: Install dependencies
+              run: make sync
+
+            - name: Build package
+              run: make build
+
+            - name: Publish to PyPI
+              uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                  packages-dir: dist/
+
+    deploy-docs:
+        name: Deploy documentation to GitHub Pages
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Set up uv
+              uses: astral-sh/setup-uv@v4
+
+            - name: Install dependencies
+              run: make sync
+
+            - name: Build documentation
+              run: uv run mkdocs build --strict
+
+            - name: Configure GitHub Pages
+              uses: actions/configure-pages@v5
+
+            - name: Upload Pages artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: site
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

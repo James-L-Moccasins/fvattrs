@@ -1,6 +1,4 @@
 name: CI
-permissions:
-  contents: write
 
 on:
   push:
@@ -47,8 +45,3 @@ jobs:
 
       - name: Run tests
         run: make test
-
-      - name: Publish documentation
-        run: mkdocs gh-deploy --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
