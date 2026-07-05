@@ -11,7 +11,7 @@ A lightweight library for validating function arguments using `attrs` models.
 
 For full usage details, examples, and reference, see the documentation:
 
-https://james-l-moccasins.github.io/fvattrs/
+[Documentation](https://james-l-moccasins.github.io/fvattrs/)
 
 ## Installation
 
