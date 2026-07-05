@@ -49,25 +49,23 @@ also converte/validate function output.
 `fvattrs` relies heavily on `attrs`, validators follow the same signature `(instance, attribute, value)` and raise `TypeError` or `ValueError` when the value is invalid. You can easily write your own validators.
 
 ```python
-from datetime import datetime
-from fvattrs import define, PositionalArgument
-from fvattrs.converters import to_date
-
-
-def not_in_the_future(instance, attribute, value):
-    if value > datetime.now():
-        raise ValueError(f"{attribute.name} must not be in the future.")
-
-
-while date := input():
-    try:
-        safe_date = define(
-            "2025-12-31",
-            converter=to_date,
-            validator=not_in_the_future,
-        )
-    except ValueError:
-        print("Please enter a valid date in the past.")
-
-    break
+>>> from datetime import datetime
+>>> from fvattrs import define, PositionalArgument
+>>> from fvattrs.converters import to_date
+>>> 
+>>> def not_in_the_future(instance, attribute, value):
+...     if value > datetime.now():
+...         raise ValueError(f"{attribute.name} must not be in the future.")
+>>> 
+>>> while date := input():
+...     try:
+...         safe_date = define(
+...             "2025-12-31",
+...             converter=to_date,
+...             validator=not_in_the_future,
+...         )
+...     except ValueError:
+...         print("Please enter a valid date in the past.")
+... 
+...     break
 ```
