@@ -1,4 +1,6 @@
 name: CI
+permissions:
+  contents: write
 
 on:
   push:
@@ -8,15 +10,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         python-version:
-          - '3.9'
-          - '3.10'
-          - '3.11'
-          - '3.12'
-          - '3.13'
-          - '3.14'
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
 
     steps:
       - name: Check out repository
@@ -45,3 +47,8 @@ jobs:
 
       - name: Run tests
         run: make test
+
+      - name: Publish documentation
+        run: mkdocs gh-deploy --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
