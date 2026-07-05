@@ -1,0 +1,77 @@
+[project]
+name = "fvattrs"
+version = "0.0.1"
+description = "Function validation using Attrs."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+
+dependencies = ["attrs>=26.1.0"]
+
+[dependency-groups]
+test = ["hypothesis>=6.141.1", "pytest>=8.4.2", "pytest-cov>=7.1.0"]
+lint = ["ruff>=0.15.14"]
+doc = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.6",
+    "mkdocstrings[python]>=0.30.1",
+]
+
+[tool.uv]
+exclude-newer = "30 days"
+
+# Linting/formating.
+[tool.ruff]
+line-length = 79
+indent-width = 4
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint.isort]
+lines-between-types = 1
+lines-after-imports = 2
+
+[tool.ruff.lint]
+select = ["ALL"]
+fixable = ["ALL"]
+ignore = [
+    "D203",   # Incompatible with D211.
+    "D213",   # Incompatible with D212.
+    "COM812", # Incompatible with formatter.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "F401", # __init__ typically never use imports.
+    "D104", # We deem __init__ docstrings are superfluous.
+]
+"tests/**/*.py" = [
+    "INP001", # Tests are not expected to be importable modules
+    "D100",   # We deem test module docstrings are superfluous.
+    "SLF001", # Private members are not private enough to be untested.
+    "S101",   # This is Pytest way of doing things.
+]
+"converters.py" = [
+    "ARG001", # Signature imposed by attrs.
+]
+"validators.py" = [
+    "ARG001", # Signature imposed by attrs.
+]
+
+# Testing.
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "--basetemp=./tmp"
+
+[tool.coverage.run]
+omit = ["conftest.py"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:"]
